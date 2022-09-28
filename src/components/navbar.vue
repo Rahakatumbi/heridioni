@@ -4,7 +4,7 @@
             <v-app-bar-nav-icon @click="drawer=!drawer" ></v-app-bar-nav-icon>
             <v-toolbar-title class="white--text">
             <!-- <panel title="E-Motars"> -->
-                <span  class="text-uppercase">ETS. Heridioni</span>
+                <span  class="text-uppercase">SOCIETE COOPERATIVE HERIDIONI SARL</span>
                 <span class="font-weight-light" ></span>
             <!-- </panel> -->
             </v-toolbar-title>
@@ -34,7 +34,7 @@
             <v-list dense>
                 <v-list-item-group active-class="pink white--text text--accent-4" color="#2C130D">
                     <div>
-                        <v-list-item to="/home" >
+                        <v-list-item to="/" >
                             <v-list-item-action>
                                 <v-icon>mdi-home</v-icon>
                             </v-list-item-action>
@@ -156,17 +156,17 @@
                         </template>
 
                         <v-list-item
-                            to="/depotreport"
+                            to="/arapport"
                         >
                             <v-list-item-content>
-                                <v-list-item-title>Depots</v-list-item-title>
+                                <v-list-item-title>Approvisionnement</v-list-item-title>
                             </v-list-item-content>
                             <v-list-item-icon >
                                 <v-icon>mdi-abjad-hebrew</v-icon>
                             </v-list-item-icon>
                         </v-list-item>
                         <v-list-item
-                            to="/retraitreport"
+                            to="/erapport"
                         >
                             <v-list-item-content>
                                 <v-list-item-title>Exportation</v-list-item-title>
@@ -214,7 +214,7 @@ export default {
             this.$store.dispatch('setToken',null)
             this.$store.dispatch('setUser',null)
             this.$store.dispatch('setBranche',null)
-            this.$router.push('/')
+            this.$router.push('/login')
         }
     }
 }

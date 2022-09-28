@@ -1,7 +1,6 @@
 <template>
     <div>
         <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
-        <div><span>Vueillez Patienter</span></div>
     </div>
 </template>
 <style scoped>
@@ -15,9 +14,9 @@
   position: absolute;
   top: 33px;
   width: 13px;
-  height: 13px;
+  height: 10px;
   border-radius: 50%;
-  background: #2C130D;
+  background: #6ce7a5;
   animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 .lds-ellipsis div:nth-child(1) {

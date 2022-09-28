@@ -2,7 +2,7 @@
     <v-app>
         <Subheader title="Champs">
             <v-spacer></v-spacer>
-            <h6>ETS. Heridioni</h6>
+            <h6>HERIDIONI SARL</h6>
         </Subheader>
         <v-card tile>
                 <v-card-actions>

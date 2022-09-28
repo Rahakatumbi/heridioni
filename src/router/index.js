@@ -12,25 +12,32 @@ import supplier from '../views/supllier'
 import client from '../views/clients'
 import banque from '../views/banque'
 import brancheStoke from '../views/stocks/brancheStoke'
+import approvisionnement from '../views/rapports/approvisionnement'
+import expedition from '../views/rapports/expedition'
 import axes from '../views/axes'
 import field from '../views/field'
 import order from '../views/orders'
 import traitement from '../views/traitement'
+import addprix from '../views/addPrice'
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '/login',
     name: 'Login',
     component: Login
   },
 
   {
-    path: '/home',
+    path: '/',
     name: 'Home',
     component: Home
   },
-
+  {
+    path:'/addprix/:id',
+    name:'Price',
+    component:addprix
+  },
   {
     path: '/fonctions',
     name: 'Fonctions',
@@ -75,6 +82,16 @@ const routes = [
     path: '/banque',
     name: 'Banque',
     component: banque
+  },
+  {
+    path: '/arapport',
+    name: 'Approvisionnement',
+    component: approvisionnement
+  },
+  {
+    path: '/erapport',
+    name: 'Expedition',
+    component: expedition
   },
   {
     path: '/central',

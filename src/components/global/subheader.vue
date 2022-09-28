@@ -6,7 +6,7 @@
 
         <div>
         <slot>
-            Ets. Heridioni
+            HERIDIONI SARL
         </slot>
         </div>
     </v-subheader>

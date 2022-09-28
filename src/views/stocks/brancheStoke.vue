@@ -2,7 +2,7 @@
     <v-app>
         <subheader title="Stocks">
                 <v-spacer></v-spacer>
-                <h6>Ets. Heridioni</h6>
+                <h6>HERIDIONI SARL</h6>
         </subheader>
         
         <v-card tile>
@@ -33,10 +33,14 @@
                                             counter="50"
                                             dense
                                             outlined
+                                            v-if="!loadingsearch"
                                             ></v-autocomplete>
+                                            <span v-else>
+                                                <spnipperpoint align="center"></spnipperpoint>
+                                            </span>
                                         </v-col>
                                         <v-col md="6" cols="6">
-                                            <v-text-field v-model="produit.kgs"
+                                            <v-text-field v-model.number="produit.kgs"
                                             label="Nombre de Kilogramme"
                                             placeholder="Entrer la Quantite des Kg"
                                             counter="10"
@@ -45,7 +49,7 @@
                                             ></v-text-field>
                                         </v-col>
                                         <v-col md="6" cols="6">
-                                            <v-text-field v-model="produit.price"
+                                            <v-text-field v-model.number="produit.price"
                                             label="Prix Unitaire."
                                             placeholder="Entrer le prix Unitaire"
                                             counter="10"
@@ -142,7 +146,7 @@
                                             <td>{{item.quality==1?'1e':'2e'}}</td>
                                             <td>{{item.kgs}} Kg(s)</td>
                                             <td>${{item.price}}</td>
-                                            <td>${{item.price * item.kgs}}</td>
+                                            <td>${{(item.price * item.kgs)}}</td>
                                         </tr>
                                         <tr>
                                             <td colspan="3">Total</td>
@@ -155,7 +159,10 @@
                                                 <v-card-actions>
                                                     <v-btn color="error" small @click="annuler">Annuler Tout</v-btn>
                                                     <v-spacer></v-spacer>
-                                                    <v-btn color="#2C130D" class="white--text" @click="saveStock" small>Enregister</v-btn>
+                                                    <v-btn color="#2C130D" class="white--text" v-if="!loading" @click="saveStock" small>Enregister</v-btn>
+                                                    <v-btn color="warning" v-else small>
+                                                        <Spnipperpoint align="center"></Spnipperpoint>
+                                                    </v-btn>
                                                 </v-card-actions>
                                             </td>
                                         </tr>
@@ -204,8 +211,9 @@ import productsServices from '../../services/productsServices'
 import supllierServices from '../../services/supllierServices'
 import stockServices from '../../services/stockServices'
 import _ from 'lodash'
+import Spnipperpoint from '../../components/global/spnipperpoint.vue'
 export default {
-    components:{subheader,panel},
+    components:{ subheader, panel, Spnipperpoint },
     data(){
         return{
             check:null,
@@ -220,6 +228,8 @@ export default {
             feuilles:[],
             privious:[],
             supplier:null,
+            loadingsearch:false,
+            loading:false
         }
     },
     computed:{
@@ -233,10 +243,10 @@ export default {
             return this.items.reduce((acc,item)=>acc + item.price * item.kgs,0)
         },
         itemKgs(){
-           return this.items.reduce((acc,item)=>acc + ++item.kgs,0) 
+           return this.items.reduce((acc,item)=>acc + item.kgs,0) 
         },
         unitprice(){
-            return this.items.reduce((acc,item)=>acc + ++item.price,0)
+            return this.items.reduce((acc,item)=>acc + item.price,0)
         }
     },
     methods:{
@@ -260,13 +270,15 @@ export default {
             this.produit.supplier_id = this.$store.state.sheet.supplier_id
         },
         async saveStock(){
+            this.loading =true
             const response = await stockServices.saveStock({
                 creator:this.$store.state.user.id,
-                supplier_id:3,
+                supplier_id:this.produit.supplier_id,
                 branche_id:this.$store.state.branche.id,
                 data:this.items
             })
             if(response){
+                this.loading =false
                 this.annuler()
                 this.$swal.fire({
                     position: 'top-end',
@@ -284,7 +296,9 @@ export default {
     },
     watch:{
         search: _.debounce(async function (value) {
+            this.loadingsearch =true
             this.supplier = (await supllierServices.saerch(value)).data
+            this.loadingsearch =false
         },700)
     }
 

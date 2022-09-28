@@ -1,7 +1,6 @@
 <template>
     <div>
         <div class="lds-facebook"><div></div><div></div><div></div></div>
-        <div><span>Veuillez Patienter</span></div>
     </div>
 </template>
 <script>
@@ -20,8 +19,8 @@ export default {
   display: inline-block;
   position: absolute;
   left: 8px;
-  width: 16px;
-  background: #2C130D;
+  width: 10px;
+  background: #dab4ab;
   animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
 }
 .lds-facebook div:nth-child(1) {

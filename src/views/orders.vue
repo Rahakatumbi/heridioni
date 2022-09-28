@@ -104,7 +104,7 @@
                                         </tr>
                                         <tr>
                                             <td colspan="4">Total</td>
-                                            <!-- <td>{{total}} Kg(s)</td> -->
+                                            <td>{{total}} Kg(s)</td>
                                         </tr>
                                         <tr>
                                             <td colspan="6">
@@ -113,7 +113,6 @@
                                                     <v-spacer></v-spacer>
                                                     <v-btn color="#2C130D" class="white--text" v-if="previous" @click="saveOrder(); savetype=1" small>Enregister Seulement</v-btn>
                                                     <v-btn color="warning" class="white--text" v-if="previous" @click="saveOrder(); savetype=2" small>Enregister Et Traiter</v-btn>
-                                                    <!-- <v-btn x-small v-else color="warning" @click="$router.push('traitement/'+order_id)" v-text="`Traiter`"></v-btn> -->
                                                 </v-card-actions>
                                             </td>
                                         </tr>
@@ -139,7 +138,7 @@
                                             <th>Statut</th>
                                         </tr>
                                     </thead>
-                                    <tbody v-if="!loading">
+                                    <tbody v-if="!loading && viewItems.length">
                                         <tr v-for="(item,index) in viewItems" :key="index">
                                             <td><a class="cut">x</a><span>{{index+1}}</span></td>
                                             <td>{{item.names}}</td>
@@ -150,23 +149,28 @@
                                             <td>{{item.quantity - item.served_quantity}} Kg(s)</td>
                                             <td :class="(item.quantity - item.served_quantity)>0?'red--text':'success--text'">{{(item.quantity - item.served_quantity)>0?'En entente':'Complet'}}</td>
                                         </tr>
-                                            <!-- <tr>
+                                            <tr>
                                                 <td colspan="4">Total</td>
-                                                <td>{{total}} Kg(s)</td>
-                                            </tr> -->
+                                                <td>{{totalpreview}} Kg(s)</td>
+                                                <td colspan="3"></td>
+                                            </tr>
                                         <tr>
-                                            <td colspan="8">
+                                            <td colspan="8" v-if="viewItems.length">
                                                 <v-card-actions>
                                                     <v-btn color="error" small @click="resetOrders">Annuler Tout</v-btn>
                                                     <v-spacer></v-spacer>
-                                                    <v-btn x-small color="warning" @click="start_traitement();$router.push('traitement/'+order_id)" v-text="`Traiter`"></v-btn>
+                                                    <v-btn x-small v-if="totalpreview-totalserved>=1" color="warning" @click="start_traitement();$router.push('traitement/'+order_id)" v-text="`Traiter`"></v-btn>
+                                                    <span text v-else color="info">
+                                                        <span text class="warning--text mr-4">Traitement deja Terminer?????</span>
+                                                        <v-btn x-small color="primary" @click="start_traitement();$router.push('addprix/'+order_id)">Passer A la Facturation</v-btn>
+                                                    </span>
                                                 </v-card-actions>
                                             </td>
                                         </tr>
                                     </tbody>
                                     <tbody v-else>
                                         <tr>
-                                            <td colspan="6" style="text-align:center">Fueille Vide</td>
+                                            <td colspan="8" style="text-align:center">Fueille Vide</td>
                                         </tr>
                                     </tbody>
                                 </template>
@@ -179,9 +183,9 @@
                         </v-flex>
                 </panel>
                 <panel :title="`Liste de demandes`" class="mt-2 uppercase-text">
-                    <v-data-table :items="orders.slice().reverse()" dense :search="search" :headers="headers">
-                        <template v-slot:body="{items}">
-                            <tbody>
+                    <v-data-table :items="orders.slice().reverse()" dense :search="search" :headers="headers" v-if="!dataloads">
+                        <template v-slot:body="{items}" v-if="!dataloads">
+                            <tbody v-if="items.length">
                                 <tr v-for="(item,index) in items" :key="index">
                                     <td>{{++index}}</td>
                                     <td>CMD0{{item.id}}</td>
@@ -196,8 +200,16 @@
                                     </td>
                                 </tr>
                             </tbody>
+                            <tbody v-else>
+                                <tr>
+                                    <td colspan="7" style="text-align:center">Vide</td>
+                                </tr>
+                            </tbody>
                         </template>
                     </v-data-table>
+                    <div v-else>
+                        <snipper-circle align="center"></snipper-circle>
+                    </div>
                 </panel>
             </v-col>
         </v-row>
@@ -211,8 +223,9 @@ import orderServices from '../services/orderServices'
 import orderService from '../services/orderServices'
 import productsServices from '../services/productsServices'
 import Snipperload from '../components/global/snipperload.vue'
+import SnipperCircle from '../components/global/snipperCircle.vue'
 export default {
-  components: { subheader, Panel,  Snipperload },
+  components: { subheader, Panel, Snipperload, SnipperCircle },
   data(){
     return{
         savetype:null,
@@ -228,6 +241,7 @@ export default {
         orders:[],
         products:[],
         produit:null,
+        dataloads:false,
         order:{id:null,client_id:null,quality:null,type:null,financement:null,product_id:null,quantity:null,mode_de_payement:null,echeance:null,lieu_de_livraison:null,creator:this.$store.state.user.id},
         headers:[{text:'N#'},{text:'Code'},{text:'Client'},{text:'Etat'},{text:'Type'},{text:'Mode de Payement'},{text:'Actions'}],
         qualites:[{text:'Premiere Qualite',id:1},{text:'Deuxieme Qualite',id:2}],
@@ -242,9 +256,15 @@ export default {
        items(){
             return this.$store.state.orders
         },
-        // total(){
-        //     return this.items.reduce((acc,item)=>acc + (++item.quantity),-1)
-        // }
+        total(){
+            return this.items.reduce((acc,item)=>acc + item.quantity,0)
+        },
+        totalpreview(){
+            return this.viewItems.reduce((acc,item)=>acc + item.quantity,0)
+        },
+        totalserved(){
+            return this.viewItems.reduce((acc,item)=>acc + item.served_quantity,0)
+        }
   },
   methods:{
     async client(){
@@ -258,6 +278,7 @@ export default {
         this.identify =data
     },
     async start_traitement(){
+        this.$store.dispatch('setClientOrder',this.identify)
         this.viewItems.forEach(element => {
             this.$store.dispatch('setOrder',element)
         });
@@ -323,6 +344,7 @@ export default {
         this.viewItems = []
     },
     async saveOrder(){
+        this.dataloads=true
         try{
             const response = await orderService.register({
                 mode_de_payement:this.order.mode_de_payement,
@@ -334,6 +356,7 @@ export default {
                 info:this.items,
             })
             if(response){
+                this.dataloads =false
                 // if(this.savetype ==2){
                 //     console.log(JSON.stringify(response.data.info))
                 //     this.$store.dispatch('setOrder',response.data.info)
@@ -352,6 +375,7 @@ export default {
                 });
             }
         }catch(e){
+            this.dataloads =false
                 this.$swal.fire({
                     icon: 'error',
                     title: `Une erreur s'est produit.`,
@@ -365,7 +389,11 @@ export default {
  async mounted(){
     this.clients = (await clientsServices.client()).data
     this.products = (await productsServices.product()).data
-    this.orders = (await orderService.orders()).data
+    this.dataloads =true
+    this.orders = (await orderService.orders()).data.filter(status=>{
+        return status.status != 3 &&status.status !=2
+    })
+    this.dataloads =false
   }
     
 }

@@ -2,7 +2,7 @@
     <v-app>
         <subheader title="Agents">
             <v-spacer></v-spacer>
-            <h6>Est. Heridioni</h6>
+            <h6>HERIDIONI SARL</h6>
         </subheader>
          
         <v-card tile>

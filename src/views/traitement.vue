@@ -24,7 +24,7 @@
                                     <div v-for="identify in identify" :key="identify.id">
                                     <small>
                                         Mode de Payement: <strong>{{mode_de_payement==1?'CAD':mode_de_payement==2?'FOB':mode_de_payement==3?'CIF':mode_de_payement==4?'CFR':mode_de_payement==4?'CFR':mode_de_payement==5?'FOT':'Autre'}}</strong> <br>
-                                        Lieu de Livraison: <strong>{{lieu_de_livraison}}</strong><br>
+                                        <!-- Lieu de Livraison: <strong>{{lieu_de_livraison}}</strong><br> -->
                                     </small>
                                     </div>
                                 </v-col>
@@ -60,19 +60,25 @@
                                             <td :id="`quantiy_used${item.id}`" class="green--text">{{0}} kg(s)</td>
                                             <td :id="`balance_qty${item.id}`" class="info--text">{{0}} kg(s)</td>
                                             <td>
-                                                <v-btn small color="secondary" v-if="(item.quantity - item.served_quantity)>0" @click="findHouse(item)">Choisir Un Depot</v-btn>
+                                                <v-btn x-small color="secondary" v-if="(item.quantity - item.served_quantity)>0" @click="findHouse(item)">Choisir Un Depot</v-btn>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="4">Total</td>
-                                            <!-- <td>{{total}} Kg(s)</td> -->
+                                            <td>{{total}} Kg(s)</td>
+                                            <td>{{totalserved}} kg(s)</td>
+                                            <td>{{total-totalserved}} kg(s)</td>
+                                            <td colspan="3"></td>
                                         </tr>
                                         <tr>
-                                            <td colspan="8">
+                                            <td colspan="10">
                                                 <v-card-actions>
                                                     <v-btn color="error" @click="annulerTout" small>Annuler</v-btn>
                                                     <v-spacer></v-spacer>
-                                                    <v-btn color="#2C130D" class="white--text" @click="saveOrder" small>Enregister la Commande</v-btn>
+                                                    <v-btn color="#2C130D" class="white--text" @click="saveOrder" v-if="!loadinsave" small>Enregister la Commande</v-btn>
+                                                    <v-btn color="info" v-else>
+                                                        <Spnipperpoint></Spnipperpoint>
+                                                    </v-btn>
                                                 </v-card-actions>
                                             </td>
                                         </tr>
@@ -179,12 +185,12 @@ import brancheServices from '../services/brancheServices'
 import _ from 'lodash'
 import SnipperCircle from '../components/global/snipperCircle.vue'
 import orderServices from '../services/orderServices'
+import Spnipperpoint from '../components/global/spnipperpoint.vue'
 // import Viewtraitement from './folders/viewtraitement.vue'
 export default {
-    components:{ panel, SnipperCircle,  },
+    components:{ panel, SnipperCircle, Spnipperpoint },
     data(){
         return{
-            identify:null,
             depots:[],
             branche:[],
             dialog:false,
@@ -198,12 +204,22 @@ export default {
             indexof:null,
             idof:null,
             all_qty:null,
+            loadinsave:false,
             affectedItem:{quantity:null,quality:null,product_id:null,creator:this.$store.state.user.id,used_quantity:null,achat_info_id:null}
         }
     },
     computed:{
         items(){
             return this.$store.state.orders
+        },
+        identify(){
+            return this.$store.state.client
+        },
+        total(){
+            return this.items.reduce((acc,item)=>acc + item.quantity,0)
+        },
+        totalserved(){
+            return this.items.reduce((acc,item)=>acc + item.served_quantity,0)
         },
         newItems(){
             return this.datas.filter((data)=>{
@@ -276,12 +292,16 @@ export default {
         },
         async saveOrder(){
             var createdby = this.$store.state.user.id
+            this.loadinsave =true
             try{
                 const res = await orderServices.solveOder({
                     createdBy : createdby,
                     items: this.$store.state.traitement
                 })
                 if(res){
+                    this.loadinsave = false
+                    // this.$store.dispatch('resetdoOrder')
+                    this.$router.push('/order')
                     this.$swal.fire({
                         icon: 'success',
                         title: `L'Operation a reussit.`,
@@ -291,6 +311,7 @@ export default {
                 }
             }
             catch(e){
+                this.loadinsave =false
                 this.$swal.fire({
                     icon: 'error',
                     title: `Il y a une erreur.`,

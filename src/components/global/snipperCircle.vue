@@ -14,8 +14,8 @@ export default {
   color: official;
   display: inline-block;
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 90px;
 }
 .lds-spinner div {
   transform-origin: 40px 40px;
@@ -31,7 +31,7 @@ export default {
   width: 6px;
   height: 18px;
   border-radius: 20%;
-  background: #2C130D;
+  background: #dab4ab;
 }
 .lds-spinner div:nth-child(1) {
   transform: rotate(0deg);
