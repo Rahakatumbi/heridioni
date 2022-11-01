@@ -3,7 +3,7 @@ import store from '../store'
 
 export default () => {
     const api= axios.create({
-        baseURL: `http://13.245.137.226:8080/api/v1`,
+        baseURL: `dioni.socoopher.org/api/v1`,
         // baseURL:`http://localhost:8080/api/v1`,
         headers: {
           Authorization: `Bearer ${store.state.token}`
