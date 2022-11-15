@@ -394,9 +394,9 @@ export default {
     this.products = (await productsServices.product()).data
     this.dataloads =true
     this.orders = (await orderService.orders()).data
-    .filter(status=>{
-        return status.status != 3 &&status.status !=2
-    })
+    // .filter(status=>{
+    //     return status.status != 3 &&status.status !=2
+    // })
     this.dataloads =false
   }
     
