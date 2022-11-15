@@ -4,7 +4,7 @@
         <v-flex>
             <v-row>
                 <v-col cols="12" md="4">
-                    <v-img src="@/assets/logo.jpg" height="70" width="100"></v-img>
+                    <v-img src="@/assets/socoopher.jpeg" height="70" width="100"></v-img>
                 </v-col>
                 <v-col cols="12" md="4">
                     <h6>Client</h6>

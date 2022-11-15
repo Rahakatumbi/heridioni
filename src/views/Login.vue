@@ -2,8 +2,8 @@
   <v-app>
   <v-layout column>
     <v-flex>
-      <panel :title="img">
-        <!-- <v-img src="@/assets/logo.png" width="180" height="30"></v-img> -->
+      <panel>
+          <span><h1>socoopher Sarl</h1></span>
       </panel>
     </v-flex>
   </v-layout>
@@ -15,8 +15,6 @@
                     <v-card-title class="white">
                         <div style="margin:auto; text-align:center;" >
                           <span class="text-uppercase">Login</span>
-                          <!-- <span>Hyfro</span> -->
-                            <!-- <v-img src="@/assets/img/logo.jpeg" width="180" height="30"></v-img> -->
                         </div>
                       </v-card-title>
                         <v-divider></v-divider>
@@ -59,7 +57,7 @@ import userSerives  from '../services/userServices'
 export default {
   components: { panel },
   data: () => ({
-    img: require('../assets/logo.jpg'),
+    img: require('../assets/socoopher.jpeg'),
     msg:null,
     error:false,
     loading:false,

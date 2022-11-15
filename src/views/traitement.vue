@@ -6,7 +6,11 @@
                         <v-flex class="mr-2 ml-2 mt-1">
                             <v-row>
                                 <v-col cols="12" md="4">
-                                    <v-img src="../assets/logo.jpg" height="70" width="100"></v-img>
+                                    <div class="text-uppercase">
+                                        <strong>Socoopher Sarl</strong><br>
+                                        <span>Traitement du Commande N#</span><br>
+                                       <strong><span class="success--text">CMD0{{$route.params.id}}</span></strong> 
+                                    </div>
                                 </v-col>
                                 <v-col cols="12" md="4">
                                     <h6>Client</h6>
@@ -205,6 +209,7 @@ export default {
             idof:null,
             all_qty:null,
             loadinsave:false,
+            mode_de_payement:null,
             affectedItem:{quantity:null,quality:null,product_id:null,creator:this.$store.state.user.id,used_quantity:null,achat_info_id:null}
         }
     },

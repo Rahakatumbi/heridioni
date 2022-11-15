@@ -48,7 +48,11 @@
                         <v-flex class="mr-2 ml-2 mt-1">
                             <v-row>
                                 <v-col cols="12" md="4">
-                                    <v-img src="../assets/logo.jpg" height="70" width="100"></v-img>
+                                    <div class="text-uppercase">
+
+                                    <strong>Socoopher Sarl</strong><br>
+                                    <span>Commande N#</span>
+                                    </div>
                                 </v-col>
                                 <v-col cols="12" md="4">
                                     <h6>Client</h6>
@@ -65,7 +69,6 @@
                                     <h6>Informations Supplementaires</h6>
                                     <div v-for="identify in identify" :key="identify.id">
                                     <small>
-                                        Mode de Payement: <strong>{{mode_de_payement==1?'CAD':mode_de_payement==2?'FOB':mode_de_payement==3?'CIF':mode_de_payement==4?'CFR':mode_de_payement==4?'CFR':mode_de_payement==5?'FOT':'Autre'}}</strong> <br>
                                         Lieu de Livraison: <strong>{{lieu_de_livraison}}</strong><br>
                                         Date: <strong>{{echeance}}</strong><br>
                                         status: <strong>{{status==1?'En Entente':status==2?'En Cours':status==3?'Termine':'???'}}</strong>
@@ -184,8 +187,8 @@
                 </panel>
                 <panel :title="`Liste de demandes`" class="mt-2 uppercase-text">
                     <v-data-table :items="orders.slice().reverse()" dense :search="search" :headers="headers" v-if="!dataloads">
-                        <template v-slot:body="{items}" v-if="!dataloads">
-                            <tbody v-if="items.length">
+                        <template v-slot:body="{items}">
+                            <tbody v-if="items.length && !dataloads">
                                 <tr v-for="(item,index) in items" :key="index">
                                     <td>{{++index}}</td>
                                     <td>CMD0{{item.id}}</td>
@@ -390,7 +393,8 @@ export default {
     this.clients = (await clientsServices.client()).data
     this.products = (await productsServices.product()).data
     this.dataloads =true
-    this.orders = (await orderService.orders()).data.filter(status=>{
+    this.orders = (await orderService.orders()).data
+    .filter(status=>{
         return status.status != 3 &&status.status !=2
     })
     this.dataloads =false

@@ -19,6 +19,9 @@ import field from '../views/field'
 import order from '../views/orders'
 import traitement from '../views/traitement'
 import addprix from '../views/addPrice'
+import depense from '../views/internes/depense'
+import document from '../views/internes/document'
+import financement from '../views/internes/financement'
 Vue.use(VueRouter)
 
 const routes = [
@@ -42,6 +45,21 @@ const routes = [
     path: '/fonctions',
     name: 'Fonctions',
     component: Fonctions
+  },
+  {
+    path: '/financement',
+    name: 'Financement',
+    component: financement
+  },
+  {
+    path: '/depense',
+    name: 'Depense',
+    component: depense
+  },
+  {
+    path: '/document',
+    name: 'Document',
+    component: document
   },
   {
     path: '/field/:id',

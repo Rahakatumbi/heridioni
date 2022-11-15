@@ -3,10 +3,8 @@
         <v-app-bar app elevate-on-scroll elevation="3" dark color="#2C130D" dense flat>
             <v-app-bar-nav-icon @click="drawer=!drawer" ></v-app-bar-nav-icon>
             <v-toolbar-title class="white--text">
-            <!-- <panel title="E-Motars"> -->
-                <span  class="text-uppercase">SOCIETE COOPERATIVE HERIDIONI SARL</span>
+                <span  class="text-uppercase">SOCOOPHER SARL</span>
                 <span class="font-weight-light" ></span>
-            <!-- </panel> -->
             </v-toolbar-title>
             <v-spacer></v-spacer>
             <span></span>
@@ -22,15 +20,15 @@
             </v-btn>
             </span>
         </v-app-bar>
+        <v-divider></v-divider>
         <v-navigation-drawer v-model="drawer" app style="backgroung-color:#2C130D">
             <v-layout align-center column>
-                <v-flex class="mt-0">
+                <v-flex class="mt-0  ml-12  text-center">
                     <!-- <v-avatar size="100" > -->
-                        <v-img src="../assets/logo.jpg" width="100%" height="100%"></v-img>
+                        <v-img src="../assets/socoopher.jpeg"  width="40%" height="70%"></v-img>
                     <!-- </v-avatar> -->
                 </v-flex>
             </v-layout>
-            <v-divider></v-divider>
             <v-list dense>
                 <v-list-item-group active-class="pink white--text text--accent-4" color="#2C130D">
                     <div>
@@ -42,6 +40,50 @@
                                 <v-list-item-title>Accueil</v-list-item-title>
                             </v-list-item-content>
                         </v-list-item>
+                    <v-list-group
+                        no-action
+                    >
+                        <template v-slot:activator>
+                            <v-list-item-action>
+                                <v-icon>mdi-cellphone-cog</v-icon>
+                            </v-list-item-action>
+                        <v-list-item-content>
+                            <v-list-item-title>Gestion Interne</v-list-item-title>
+                        </v-list-item-content>
+                        </template>
+                        <v-list-item
+                            to="/financement"
+                        >
+                            <v-list-item-content>
+                                <v-list-item-title>Financement</v-list-item-title>
+                            </v-list-item-content>
+                            <v-list-item-icon >
+                                <v-icon>mdi-chart-donut</v-icon>
+                            </v-list-item-icon>
+                        </v-list-item>
+                        <v-list-item
+                            to="/depense"
+                        >
+                            <v-list-item-content>
+                                <v-list-item-title>Depenses</v-list-item-title>
+                            </v-list-item-content>
+                            <v-list-item-icon >
+                                <v-icon>mdi-chart-donut</v-icon>
+                            </v-list-item-icon>
+                        </v-list-item>
+                        <v-list-item
+                            to="/document"
+                        >
+                            <v-list-item-content>
+                                <v-list-item-title>
+                                    <span >Document</span>
+                                </v-list-item-title>
+                            </v-list-item-content>
+                            <v-list-item-icon >
+                                <v-icon>mdi-chart-donut-variant</v-icon>
+                            </v-list-item-icon>
+                        </v-list-item>
+                    </v-list-group>
                         <v-list-item to="/clients" >
                             <v-list-item-action>
                                 <v-icon>mdi-account-multiple-plus</v-icon>

@@ -90,11 +90,43 @@
                                     </v-row>
                                 </v-flex>
                             </v-row>
+                            <!-- <div>
+                                <v-layout wrap row>
+                                <v-flex sm6 xs12 md6 lg6>
+                                    <v-card class="ma-1">
+                                        <v-list-item>
+                                            <v-list-item-content>
+                                                <div class="overline text-right">
+                                                    Financement
+                                                </div>
+                                                <v-list-item-title class="mb-1 text-right">
+                                                    {{finbalance}}</v-list-item-title>
+                                                <v-list-item-title class="mb-1 text-right">Kg: 4554</v-list-item-title>
+                                            </v-list-item-content>
+                                        </v-list-item>  
+                                    </v-card>
+                                </v-flex>
+                                <v-flex sm6 xs12 md6 lg6>
+                                    <v-card class="ma-1">
+                                        <v-list-item>
+                                            <v-list-item-content>
+                                                <div class="overline text-right">
+                                                    Montant Total
+                                                </div>
+                                                <v-list-item-title class="mb-1 text-right">
+                                                    No: 45345</v-list-item-title>
+                                                <v-list-item-title class="mb-1 text-right">Kg: 4554</v-list-item-title>
+                                            </v-list-item-content>
+                                        </v-list-item>
+                                    </v-card>
+                                </v-flex>
+                                </v-layout>
+                            </div> -->
                         </v-card-text>
                         <v-divider></v-divider>
                         <v-card-actions>
-                            <v-btn small color="error">Annuler</v-btn>
                             <v-spacer></v-spacer>
+                            <v-btn small color="error">Annuler</v-btn>
                             <v-btn small color="#2C130D" @click="feuille" class="white--text">Ajouter A la Feuille</v-btn>
                         </v-card-actions>
                     </panel>
@@ -104,7 +136,40 @@
                         <v-flex class="mr-2 ml-2 mt-1">
                             <v-row>
                                 <v-col cols="12" md="6">
-                                    <v-img src="../../assets/logo.jpg" height="70" width="100"></v-img>
+                            <div class="mt-2 ml-2 mb-4">
+                                <v-layout wrap row>
+                                <!-- <v-flex sm6 xs12 md6 lg6>
+                                    <v-card class="ma-1">
+                                        <div class="overline mt-2">
+                                            <v-icon dark small color="grey" class="ml-1 rounded">mdi-bank-outline</v-icon>
+                                            <strong><span class="ml-2" style="size: 100px;">Fin</span></strong><span><small> Actuel</small></span> <br>
+                                            <strong><span class="ml-9 secondary--text">{{finbalance}}</span></strong>  
+                                        </div>  
+                                    </v-card>
+                                </v-flex> -->
+                                <v-flex sm6 xs12 md6 lg12>
+                                    <v-card class="ma-1">
+                                        <div class="overline mt-2">
+                                            <v-icon dark small color="#2C130D" class="ml-1 rounded ">mdi-bank-outline</v-icon>
+                                            <strong><span class="ml-2 " style="size: 100px;">Balance Actuel</span></strong> <br>
+                                            <div class="ml-6">
+                                            <span>Montant du Financement </span>
+                                            <strong class="info--text">{{finbalance}} $</strong>
+                                            <br> 
+                                            <span>Depasse </span><strong class="warning--text">{{total}} $</strong>
+                                            <br>
+                                            <v-divider></v-divider>
+                                            </div>
+                                            <div class="text-left ml-6">
+                                            <span>Reste</span><strong class="ml-9 primary--text">{{finbalance - total}} $</strong>
+                                            <span v-if="(finbalance - total) <0"><v-icon color="red" small>{{'mdi-alert'}}</v-icon></span>
+                                            <span v-if="(finbalance - total) >= 0"><v-icon color="info" small>{{'mdi-check-all'}}</v-icon></span>
+                                            </div>  
+                                        </div>  
+                                    </v-card>
+                                </v-flex>
+                                </v-layout>
+                            </div>
                                 </v-col>
                                 <v-col cols="12" md="6">
                                     <h6>Fournisseur</h6>
@@ -124,6 +189,7 @@
                                 <template v-slot:default>
                                     <thead>
                                         <tr>
+                                            <th></th>
                                             <th>#</th>
                                             <th>Item</th>
                                             <td>Qualite</td>
@@ -134,7 +200,8 @@
                                     </thead>
                                     <tbody v-if="items.length">
                                         <tr v-for="(item,index) in items" :key="index">
-                                            <td><a class="cut">x</a><span>{{index+1}}</span></td>
+                                            <td><v-icon color="error" @click="items.splice(index,1)" small>mdi-beaker-remove</v-icon></td>
+                                            <td>{{index+1}}</td>
                                             <span v-if="item.produit.legnth">
                                                 <span v-for="product in item.produit " :key="product.id">
                                                     <td>{{product.names}}</td>
@@ -149,16 +216,23 @@
                                             <td>${{(item.price * item.kgs)}}</td>
                                         </tr>
                                         <tr>
+                                            <td></td>
                                             <td colspan="3">Total</td>
                                             <td>{{itemKgs}} Kg(s)</td>
                                             <td>${{unitprice}}</td>
                                             <td>${{total}}</td>
                                         </tr>
+                                        <!-- <tr>
+                                            <td colspan="4">Financement</td>
+                                            <td>{{"Montant"}} Kg(s)</td>
+                                            <td>${{unitprice}}</td>
+                                            <td>${{total}}</td>
+                                        </tr> -->
                                         <tr>
-                                            <td colspan="6">
+                                            <td colspan="7">
                                                 <v-card-actions>
-                                                    <v-btn color="error" small @click="annuler">Annuler Tout</v-btn>
                                                     <v-spacer></v-spacer>
+                                                    <v-btn color="error" small @click="annuler">Annuler Tout</v-btn>
                                                     <v-btn color="#2C130D" class="white--text" v-if="!loading" @click="saveStock" small>Enregister</v-btn>
                                                     <v-btn color="warning" v-else small>
                                                         <Spnipperpoint align="center"></Spnipperpoint>
@@ -212,10 +286,12 @@ import supllierServices from '../../services/supllierServices'
 import stockServices from '../../services/stockServices'
 import _ from 'lodash'
 import Spnipperpoint from '../../components/global/spnipperpoint.vue'
+import financementServices from '../../services/financementServices'
 export default {
     components:{ subheader, panel, Spnipperpoint },
     data(){
         return{
+            balance: this.finbalance-this.total,
             check:null,
             qualites:[{text:'Premiere Qualite',value:1},{text:'Deuxieme Qualite',value:2}],
             headers:[{text:'N#'},{text:'Fermier'},{text:'Code'},{text:'Date'},{text:'Enregistrer Par'},{text:'Actions'}],
@@ -229,10 +305,14 @@ export default {
             privious:[],
             supplier:null,
             loadingsearch:false,
-            loading:false
+            loading:false,
+            balances:[]
         }
     },
     computed:{
+        finbalance(){
+            return this.balances.reduce((acc,item)=>acc + item.montant - item.used_amount,0)
+        },
         champs(){
             return this.supplier.champs
         },
@@ -247,9 +327,12 @@ export default {
         },
         unitprice(){
             return this.items.reduce((acc,item)=>acc + item.price,0)
-        }
+        },
     },
     methods:{
+        async remove(index){
+            this.items.slice(index,1)
+        },
         async checked(){
             this.check =1
         },
@@ -293,6 +376,7 @@ export default {
    async mounted(){
        this.produits = (await productsServices.product()).data
        this.privious = (await stockServices.stock()).data
+       this.balances = (await financementServices.financement(this.$store.state.branche.id)).data
     },
     watch:{
         search: _.debounce(async function (value) {

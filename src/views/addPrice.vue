@@ -47,23 +47,26 @@
         </Panel>
         <div class="mt-4">
             <v-card tile>
-            <v-row class="mr-2 ml-2">
+            <v-divider class="test"></v-divider>
+            <v-row class="mr-2 mt-1 ml-2">
                 <v-col cols="12" md="3">
                     <span><strong>Facturation</strong></span>
+                    <div class="mt-1">
                     <v-text-field outlined dense readonly v-model="facture.names" label="Produit"></v-text-field>
                     <v-text-field outlined dense readonly v-model="facture.quality" label="Qualite"></v-text-field>
                     <v-text-field outlined dense readonly v-model="facture.quantity" label="Quantite"></v-text-field>
                     <v-text-field outlined dense v-model.number="facture.price" label="Prix Unitaire"></v-text-field>
                     <v-btn small @click="addPrice" color="primary">Ajouter a la Facture</v-btn><br><br>
                     <span v-if="error" class="error--text">Le prix est vide!!!</span>
+                </div>
                 </v-col>
                 <v-col cols="12" md="9">
                     <div>
-                        Cotation
+                        <h4>Cotation</h4>
                         <v-flex class="mr-2 ml-2 mt-1">
                             <v-row>
                                 <v-col cols="12" md="4">
-                                    <v-img src="../assets/logo.jpg" height="70" width="100"></v-img>
+                                    <v-img src="../assets/socoopher.jpeg" height="70" width="100"></v-img>
                                 </v-col>
                                 <v-col cols="12" md="4">
                                     <h6>Client</h6>
@@ -277,4 +280,11 @@ export default {
         background-color: #003d42 !important ;
         color: white;
     }
-    </style>
+
+.test {
+       border-width: 2px !important;
+       border-color: #2C130D !important;
+       height: 100%;
+       background-color: #1B483E;
+}
+</style>
