@@ -28,7 +28,7 @@
                                             :items="produits"
                                             @change="product(produit.produit_id)"
                                             item-value="id"
-                                            item-color="green"
+                                            item-color="#2C130D"
                                             item-text="names"
                                             counter="50"
                                             dense
@@ -49,14 +49,17 @@
                                             ></v-text-field>
                                         </v-col>
                                         <v-col md="6" cols="6">
-                                            <v-text-field v-model.number="produit.price"
+                                            <v-autocomplete 
+                                            :items="prices" 
+                                            item-value="price" 
+                                            item-text="price" 
+                                            v-model.number="produit.price"
                                             label="Prix Unitaire."
                                             placeholder="Entrer le prix Unitaire"
-                                            readonly
                                             counter="10"
                                             dense
                                             outlined
-                                            ></v-text-field>
+                                            ></v-autocomplete>
                                         </v-col>
                                         <v-col md="12" cols="12">
                                             <v-select v-model="produit.quality"
@@ -91,38 +94,6 @@
                                     </v-row>
                                 </v-flex>
                             </v-row>
-                            <!-- <div>
-                                <v-layout wrap row>
-                                <v-flex sm6 xs12 md6 lg6>
-                                    <v-card class="ma-1">
-                                        <v-list-item>
-                                            <v-list-item-content>
-                                                <div class="overline text-right">
-                                                    Financement
-                                                </div>
-                                                <v-list-item-title class="mb-1 text-right">
-                                                    {{finbalance}}</v-list-item-title>
-                                                <v-list-item-title class="mb-1 text-right">Kg: 4554</v-list-item-title>
-                                            </v-list-item-content>
-                                        </v-list-item>  
-                                    </v-card>
-                                </v-flex>
-                                <v-flex sm6 xs12 md6 lg6>
-                                    <v-card class="ma-1">
-                                        <v-list-item>
-                                            <v-list-item-content>
-                                                <div class="overline text-right">
-                                                    Montant Total
-                                                </div>
-                                                <v-list-item-title class="mb-1 text-right">
-                                                    No: 45345</v-list-item-title>
-                                                <v-list-item-title class="mb-1 text-right">Kg: 4554</v-list-item-title>
-                                            </v-list-item-content>
-                                        </v-list-item>
-                                    </v-card>
-                                </v-flex>
-                                </v-layout>
-                            </div> -->
                         </v-card-text>
                         <v-divider></v-divider>
                         <v-card-actions>
@@ -139,15 +110,6 @@
                                 <v-col cols="12" md="6">
                             <div class="mt-2 ml-2 mb-4">
                                 <v-layout wrap row>
-                                <!-- <v-flex sm6 xs12 md6 lg6>
-                                    <v-card class="ma-1">
-                                        <div class="overline mt-2">
-                                            <v-icon dark small color="grey" class="ml-1 rounded">mdi-bank-outline</v-icon>
-                                            <strong><span class="ml-2" style="size: 100px;">Fin</span></strong><span><small> Actuel</small></span> <br>
-                                            <strong><span class="ml-9 secondary--text">{{finbalance}}</span></strong>  
-                                        </div>  
-                                    </v-card>
-                                </v-flex> -->
                                 <v-flex sm6 xs12 md6 lg12>
                                     <v-card class="ma-1">
                                         <div class="overline mt-2">
@@ -223,12 +185,6 @@
                                             <td>${{unitprice}}</td>
                                             <td>${{total}}</td>
                                         </tr>
-                                        <!-- <tr>
-                                            <td colspan="4">Financement</td>
-                                            <td>{{"Montant"}} Kg(s)</td>
-                                            <td>${{unitprice}}</td>
-                                            <td>${{total}}</td>
-                                        </tr> -->
                                         <tr>
                                             <td colspan="7">
                                                 <v-card-actions>
@@ -299,13 +255,15 @@ export default {
             headers:[{text:'N#'},{text:'Fermier'},{text:'Code'},{text:'Date'},{text:'Enregistrer Par'},{text:'Actions'}],
             saerch:null,
             search:null,
-            produit:{produit_id:{id:null,names:null},supplier:{},produit:{names:null},
+            produit:{produit_id:{id:null,names:null},supplier:{},produit:{names:null},prix_id:null,
             kgs:null,names:null,check:null,field_id:null,quantite:null,price:null,creator:this.$store.state.user.id,supplier_id:null},
             produits:[],
             disabled:false,
             feuilles:[],
             privious:[],
             supplier:null,
+            prices:[],
+            prix:[],
             loadingsearch:false,
             loading:false,
             balances:[]
@@ -347,6 +305,10 @@ export default {
           const data= this.produits.filter(item=>{
                 return item.id ==id
             })
+            const price = this.prix.filter(item =>{
+                return item.product_id == id
+            })
+            this.prices = price
             this.produit.produit= data
         },
         async feuille(){
@@ -358,7 +320,7 @@ export default {
             this.loading =true
             const response = await stockServices.saveStock({
                 creator:this.$store.state.user.id,
-                supplier_id:this.produit.supplier_id,
+                supplier_id:this.supplier.supplier.id,
                 branche_id:this.$store.state.branche.id,
                 data:this.items
             })
@@ -378,7 +340,7 @@ export default {
    async mounted(){
        this.produits = (await productsServices.product()).data
        this.privious = (await stockServices.stock()).data
-       this.produit.price = (await PriceServices.last_price()).data.price
+       this.prix = (await PriceServices.last_price()).data
        this.balances = (await financementServices.financement(this.$store.state.branche.id)).data
     },
     watch:{

@@ -5,8 +5,9 @@
                 <v-col cols="12" md="4">
                     <panel :title="depense.id?'Modification':'Formulaire'" class="elevation-1 mt-2 ml-2 mr-1">
                         <div class="mt-2 ml-2 mr-2 ">
+                            <v-text-field label="Prix" v-model.number="depense.price" outlined dense placeholder="Tapez le prix"></v-text-field>
+                            <v-autocomplete label="Produit" :items="products" item-text="names" item-value="id" v-model="depense.product_id" dense outlined placeholder="Choisir le produit"></v-autocomplete>
                             <v-select label="Status" :items="status" item-text="text" item-value="value" v-model="depense.status" dense outlined placeholder="status du depense"></v-select>
-                            <v-text-field label="price" v-model.number="depense.price" outlined dense placeholder="status du price"></v-text-field>
                             <v-textarea label="Description" v-model="depense.description" outlined dense placeholder="Description du depense"></v-textarea>
                         </div>
                         <v-divider></v-divider>
@@ -26,8 +27,9 @@
                         <v-data-table dense :headers="headers" :items="depenses" :search="search">
                             <template v-slot:body="{items}">
                                 <tbody v-if="items.length">
-                                    <tr v-for="(item,index) in items" :key="index">
+                                    <tr v-for="(item,index) in items.slice().reverse()" :key="index">
                                         <td>{{index+1}}</td>
+                                        <td>{{item.names}}</td>
                                         <td>{{item.price}}</td>
                                         <td>
                                             <v-chip small class="info white--text" v-if="item.status=='Active'">Active</v-chip>
@@ -61,6 +63,7 @@ import panelVue from '../../components/global/panel.vue'
 import snipperload from '../../components/global/snipperload.vue'
 import Spnipperpoint from '../../components/global/spnipperpoint.vue'
 import PriceServices from '../../services/PriceServices'
+import productsServices from '../../services/productsServices'
 export default{
     components:{ "panel": panelVue,  Spnipperpoint,snipperload },
     data(){
@@ -79,6 +82,7 @@ export default{
             headers:[{text:'N#'},{text:'Prix',value:'price'},{text:'Statut',value:'status'},{text:''}],
             loading:false,
             formloading:false,
+            products:[],
         }
     },
     methods:{
@@ -127,6 +131,7 @@ export default{
     async mounted(){
         this.loading =true
         this.depenses = (await PriceServices.all_price()).data
+        this.products = (await productsServices.product()).data
         this.loading =false
     }
 }
