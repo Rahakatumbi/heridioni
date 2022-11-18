@@ -19,9 +19,10 @@ import field from '../views/field'
 import order from '../views/orders'
 import traitement from '../views/traitement'
 import addprix from '../views/addPrice'
-import depense from '../views/internes/depense'
-import document from '../views/internes/document'
-import financement from '../views/internes/financement'
+import depense from '../views/tools/depense'
+import document from '../views/tools/document'
+import financement from '../views/tools/financement'
+import prices from '../views/tools/fixingprice'
 Vue.use(VueRouter)
 
 const routes = [
@@ -70,6 +71,11 @@ const routes = [
     path: '/clients',
     name: 'Client',
     component: client
+  },
+  {
+    path: '/prices',
+    name: 'Prices',
+    component: prices
   },
   {
     path: '/order',

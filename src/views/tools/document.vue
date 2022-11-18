@@ -7,7 +7,7 @@
                         <div class="elvation-6 mt-2 ml-2 mr-2 ">
                             <v-text-field label="Intitule du document" v-model="depense.intitule" dense outlined placeholder="Intitule du document"></v-text-field>
                             <v-text-field label="Oject du Document" v-model="depense.object" dense outlined placeholder="Object du depense"></v-text-field>
-                            <v-text-field label="Document" type="file" v-model.number="depense.document" outlined dense placeholder="Document"></v-text-field>
+                            <v-file-input label="Document" type="file" v-model.number="depense.document" outlined dense placeholder="Document"></v-file-input>
                             <v-textarea label="Description" v-model="depense.description" outlined dense placeholder="Description du depense"></v-textarea>
                         </div>
                         <v-divider></v-divider>
@@ -87,7 +87,6 @@
 <script>
 import panelVue from '../../components/global/panel.vue'
 import financeServices from '../../services/financementServices'
-import brancheServices from '../../services/brancheServices'
 import Spnipperpoint from '../../components/global/spnipperpoint.vue'
 export default{
     components:{"panel":panelVue,Spnipperpoint},
@@ -125,7 +124,7 @@ export default{
         async saveFinancement(){
             this.formloading = true
             try{
-                let form =  new FormData()
+                const form =  new FormData()
                 form.append('id',this.depense.id)
                 form.append('intitule',this.depense.intitule)
                 form.append('object',this.depense.object)

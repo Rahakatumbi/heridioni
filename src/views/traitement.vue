@@ -79,7 +79,7 @@
                                                 <v-card-actions>
                                                     <v-btn color="error" @click="annulerTout" small>Annuler</v-btn>
                                                     <v-spacer></v-spacer>
-                                                    <v-btn color="#2C130D" class="white--text" @click="saveOrder" v-if="!loadinsave" small>Enregister la Commande</v-btn>
+                                                    <v-btn color="#2C130D" class="white--text" @click="saveOrder" v-if="!loadinsave" small>Enregister</v-btn>
                                                     <v-btn color="info" v-else>
                                                         <Spnipperpoint></Spnipperpoint>
                                                     </v-btn>
@@ -255,6 +255,7 @@ export default {
             this.all_qty = item.quantity - item.served_quantity
         },
         async selectItem(index ,item){
+            console.log(JSON.stringify(item))
             this.indexof = index
             this.affectedItem.product_id = this.product_id
             this.affectedItem.achat_info_id =item.id

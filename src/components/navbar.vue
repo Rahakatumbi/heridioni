@@ -100,6 +100,14 @@
                                 <v-list-item-title>Commandes</v-list-item-title>
                             </v-list-item-content>
                         </v-list-item>
+                        <v-list-item to="/prices" >
+                            <v-list-item-action>
+                                <v-icon>mdi-abjad-hebrew</v-icon>
+                            </v-list-item-action>
+                            <v-list-item-content>
+                                <v-list-item-title>Prix</v-list-item-title>
+                            </v-list-item-content>
+                        </v-list-item>
                         <v-list-item to="/supplier" >
                             <v-list-item-action>
                                 <v-icon>mdi-account-multiple</v-icon>

@@ -114,7 +114,7 @@
                                                 <v-card-actions>
                                                     <v-btn color="error" small @click="resetOrders">Annuler Tout</v-btn>
                                                     <v-spacer></v-spacer>
-                                                    <v-btn color="#2C130D" class="white--text" v-if="previous" @click="saveOrder(); savetype=1" small>Enregister Seulement</v-btn>
+                                                    <v-btn color="#2C130D" class="white--text" v-if="previous" @click="saveOrder(); savetype=1" small>Enregister</v-btn>
                                                     <v-btn color="warning" class="white--text" v-if="previous" @click="saveOrder(); savetype=2" small>Enregister Et Traiter</v-btn>
                                                 </v-card-actions>
                                             </td>
@@ -282,6 +282,7 @@ export default {
     },
     async start_traitement(){
         this.$store.dispatch('setClientOrder',this.identify)
+        console.log(JSON.stringify(this.viewItems))
         this.viewItems.forEach(element => {
             this.$store.dispatch('setOrder',element)
         });

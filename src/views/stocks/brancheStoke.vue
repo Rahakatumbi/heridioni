@@ -52,6 +52,7 @@
                                             <v-text-field v-model.number="produit.price"
                                             label="Prix Unitaire."
                                             placeholder="Entrer le prix Unitaire"
+                                            readonly
                                             counter="10"
                                             dense
                                             outlined
@@ -60,7 +61,7 @@
                                         <v-col md="12" cols="12">
                                             <v-select v-model="produit.quality"
                                             label="Qualite"
-                                            placeholder="Entrer le prix Unitaire"
+                                            placeholder="Entrer le Kg"
                                             counter="10"
                                             :items="qualites"
                                             item-text="text"
@@ -287,6 +288,7 @@ import stockServices from '../../services/stockServices'
 import _ from 'lodash'
 import Spnipperpoint from '../../components/global/spnipperpoint.vue'
 import financementServices from '../../services/financementServices'
+import PriceServices from '../../services/PriceServices'
 export default {
     components:{ subheader, panel, Spnipperpoint },
     data(){
@@ -376,6 +378,7 @@ export default {
    async mounted(){
        this.produits = (await productsServices.product()).data
        this.privious = (await stockServices.stock()).data
+       this.produit.price = (await PriceServices.last_price()).data.price
        this.balances = (await financementServices.financement(this.$store.state.branche.id)).data
     },
     watch:{
@@ -388,34 +391,3 @@ export default {
 
 }
 </script>
-<style>
-.cut
-{
-	border-width: 1px;
-	display: block;
-	font-size: .8rem;
-	padding: 0.25em 0.5em;	
-	float: left;
-	text-align: center;
-	width: 0.6em;
-}
-
-.cut
-{
-	background: rgb(226, 19, 19);
-	box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-	background-image: -moz-linear-gradient(#f5280dc2 5%, #dd3705 100%);
-	background-image: -webkit-linear-gradient(#c24d09 5%, #f3440e 100%);
-	border-radius: 0.5em;
-	border-color: #fa570b;
-	color: #FFF;
-	cursor: pointer;
-	font-weight: bold;
-	text-shadow: 0 -1px 2px rgba(0,0,0,0.333);
-}
-
-.cut { opacity: 0; position: absolute; top: 0; left: -1.5em; }
-/* .cut { -webkit-transition: opacity 100ms ease-in; } */
-
-.orderclass:hover .cut { opacity: 1; }
-</style>
