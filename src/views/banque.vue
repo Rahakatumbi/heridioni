@@ -139,7 +139,8 @@ export default {
                     email:this.banque.email,
                     creator:this.banque.creator,
                     rccm:this.banque.rccm,
-                    identification:this.banque.identification
+                    identification:this.banque.identification,
+                    created_by:this.$store.state.user.id
                 })
                 if(response){
                     this.loading =false

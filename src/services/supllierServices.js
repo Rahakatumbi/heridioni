@@ -1,7 +1,7 @@
 import Api from './Api'
 
 export default{
-    register(data){return Api().post("/supllier",data)},
-    supllier(){return Api().get("/supllier")},
-    saerch(id){return Api().get("/supllier/"+id)},
+    register(data){return Api().post("/fermier",data)},
+    supllier(){return Api().get("/fermiers")},
+    saerch(data){return Api().post("search/fermier",data)},
 }

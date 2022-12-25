@@ -4,5 +4,5 @@ export default{
     register(data){
         return Api().post("/product",data)
     },
-    product(){return Api().get("/product")}
+    product(){return Api().get("/products")}
 }

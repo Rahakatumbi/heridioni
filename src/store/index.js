@@ -17,6 +17,7 @@ export default new Vuex.Store({
     traitement:[],
     client:null,
     orders:[],
+    achat:null
   },
   mutations: {
     setToken(state,token){
@@ -27,6 +28,9 @@ export default new Vuex.Store({
       else{
         state.isLogging = false
       }
+    },
+    achatView(state,item){
+      state.achat = item
     },
     setUser(state,User){
       state.user = User
@@ -86,6 +90,9 @@ export default new Vuex.Store({
     },
     doOrder({commit},order){
       commit('doOrder',order)
+    },
+    achatView({commit},item){
+      commit('achatView',item)
     }
   },
   modules: {

@@ -13,6 +13,7 @@ import client from '../views/clients'
 import banque from '../views/banque'
 import brancheStoke from '../views/stocks/brancheStoke'
 import approvisionnement from '../views/rapports/approvisionnement'
+import achat from '../views/stocks/viewAchat'
 import expedition from '../views/rapports/expedition'
 import axes from '../views/axes'
 import field from '../views/field'
@@ -51,6 +52,11 @@ const routes = [
     path: '/financement',
     name: 'Financement',
     component: financement
+  },
+  {
+    path: '/achat/:id',
+    name: 'AchatId',
+    component: achat
   },
   {
     path: '/depense',

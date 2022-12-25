@@ -24,7 +24,7 @@
                                         <v-col md="12" cols="12">
                                             <v-autocomplete label="Nom du Produit" 
                                             placeholder="vueillez Choisir le nom du produit" 
-                                            v-model="produit.produit_id"
+                                            v-model="produit.product_id"
                                             :items="produits"
                                             @change="product(produit.produit_id)"
                                             item-value="id"
@@ -40,7 +40,7 @@
                                             </span>
                                         </v-col>
                                         <v-col md="6" cols="6">
-                                            <v-text-field v-model.number="produit.kgs"
+                                            <v-text-field v-model.number="produit.quantity"
                                             label="Nombre de Kilogramme"
                                             placeholder="Entrer la Quantite des Kg"
                                             counter="10"
@@ -68,7 +68,7 @@
                                             counter="10"
                                             :items="qualites"
                                             item-text="text"
-                                            item-value="value"
+                                            item-value="text"
                                             dense
                                             outlined
                                             ></v-select>
@@ -138,9 +138,10 @@
                                     <h6>Fournisseur</h6>
                                     <div v-if="supplier">
                                     <small>
-                                        Noms: <strong>{{supplier.supplier.names}}</strong> <br>
-                                        Code: <strong>{{supplier.supplier.code}}</strong><br>
-                                        Addresse: <strong>{{supplier.supplier.address}}</strong>
+                                        Noms: <strong>{{supplier.names}}</strong> <br>
+                                        Code: <strong>{{supplier.code}}</strong><br>
+                                        Addresse: <strong>{{supplier.address}}</strong>
+                                        Telephone: <strong>{{supplier.telephone}}</strong>
                                     </small>
                                     </div>
                                 </v-col>
@@ -173,10 +174,10 @@
                                             <span v-else>
                                                 <td>{{item.produit_id==1?'Cacao':item.produit_id==2?'Caffee':'Caoutchout'}}</td>
                                             </span>
-                                            <td>{{item.quality==1?'1e':'2e'}}</td>
-                                            <td>{{item.kgs}} Kg(s)</td>
+                                            <td>{{item.quality}}</td>
+                                            <td>{{item.quantity}} Kg(s)</td>
                                             <td>${{item.price}}</td>
-                                            <td>${{(item.price * item.kgs)}}</td>
+                                            <td>${{(item.price * item.quantity)}}</td>
                                         </tr>
                                         <tr>
                                             <td></td>
@@ -217,9 +218,14 @@
                                 <tbody v-if="items.length">
                                     <tr v-for="(item,index) in items" :key="index">
                                         <td>{{++index}}</td>
-                                        <td>{{item.id}}</td>
-                                        <td>00{{item.id}}</td>
-                                        <td>{{item.supplier_id}}</td>
+                                        <td>{{item.code}}</td>
+                                        <td>{{item.fermier}}</td>
+                                        <td>{{item.montant}} USD</td>
+                                        <td>{{item.created_at}}</td>
+                                        <td>{{item.branche}}</td>
+                                        <td>
+                                            <v-btn @click="$router.push(`/achat/${item.id}`),$store.dispatch('achatView',item)" x-small color="green" class="white--text">Afficher <v-icon small>mdi-eye</v-icon> </v-btn>
+                                        </td>
                                     </tr>
                                 </tbody>
                                 <tbody v-else>
@@ -252,7 +258,7 @@ export default {
             balance: this.finbalance-this.total,
             check:null,
             qualites:[{text:'Premiere Qualite',value:1},{text:'Deuxieme Qualite',value:2}],
-            headers:[{text:'N#'},{text:'Fermier'},{text:'Code'},{text:'Date'},{text:'Enregistrer Par'},{text:'Actions'}],
+            headers:[{text:'N#'},{text:"Code"},{text:'Fermier'},{text:'Montant'},{text:'Date'},{text:'Depot'},{text:'Actions'}],
             saerch:null,
             search:null,
             produit:{produit_id:{id:null,names:null},supplier:{},produit:{names:null},prix_id:null,
@@ -335,6 +341,15 @@ export default {
                     timer: 1500
                 });
             }
+        },
+        async searchFermer(value){
+            this.loadingsearch =true
+            const response = await supllierServices.saerch({
+                code:value,
+                name:value
+            })
+            this.supplier = response.data
+            this.loadingsearch =false
         }
     },
    async mounted(){
@@ -345,9 +360,7 @@ export default {
     },
     watch:{
         search: _.debounce(async function (value) {
-            this.loadingsearch =true
-            this.supplier = (await supllierServices.saerch(value)).data
-            this.loadingsearch =false
+           this.searchFermer(value)
         },700)
     }
 
