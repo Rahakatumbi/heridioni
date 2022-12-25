@@ -20,6 +20,19 @@
                                     outlined
                                     ></v-text-field>
                                 </v-col>
+                                <v-col md="12" cols="12">
+                                    <v-autocomplete
+                                    v-model="produit.status"
+                                    label="Statut"
+                                    :items="status"
+                                    item-value="text"
+                                    item-text="text"
+                                    placeholder="Choisir le Statut"
+                                    counter="50"
+                                    dense
+                                    outlined
+                                    ></v-autocomplete>
+                                </v-col>
                             </v-row>
                         </v-card-text>
                         <v-divider></v-divider>
@@ -38,6 +51,7 @@
                                     <tr v-for="(item,index) in items" :key="index">
                                         <td>{{index+1}}</td>
                                         <td>{{item.names}}</td>
+                                        <td>{{item.code }}</td>
                                         <td>
                                             <v-btn x-small @click="produit=item" color="#2C130D" class="white--text">Modifier</v-btn>
                                             <v-btn x-small color="error" class="white--text">Supprimer</v-btn>
@@ -62,14 +76,15 @@ export default {
         return{
             loading:false,
             items:[],
-            headers:[{text:'N#'},{text:"Nom du Produit"},{text:'Actions'}],
+            headers:[{text:'N#'},{text:"Nom du Produit"},{text:"Code du Produit"},{text:'Actions'}],
             search:null,
-            produit:{names:null,id:null,creator:1},
+            produit:{names:null,id:null,created_by:this.$store.state.user.id,status:null},
+            status:[{text:'Actif',id:1},{text:'Desactiver',id:2}],
         }
     },
     methods:{
         async annuler(){
-            this.produit={names:null,id:null,creator:1}
+            this.produit={names:null,id:null}
             this.loading =false
         },
         async saveProduct(){
@@ -102,7 +117,7 @@ export default {
         }
     },
    async mounted(){
-       this.items = (await productsServices.product()).data
+       this.items = (await productsServices.products()).data
     }
 }
 </script>

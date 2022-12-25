@@ -5,8 +5,8 @@
                 <v-col cols="12" md="4">
                     <panel :title="depense.id?'Modification':'Formulaire'" class="elevation-1 mt-2 ml-2 mr-1">
                         <div class="mt-2 ml-2 mr-2 ">
-                            <v-text-field label="Prix" v-model.number="depense.price" outlined dense placeholder="Tapez le prix"></v-text-field>
-                            <v-autocomplete label="Produit" :items="products" item-text="names" item-value="id" v-model="depense.product_id" dense outlined placeholder="Choisir le produit"></v-autocomplete>
+                            <v-text-field label="Prix" v-model="depense.price" outlined dense placeholder="Tapez le prix"></v-text-field>
+                            <v-autocomplete label="Produit" :items="products" item-text="names" item-value="id" v-model.number="depense.product_id" dense outlined placeholder="Choisir le produit"></v-autocomplete>
                             <v-select label="Status" :items="status" item-text="text" item-value="value" v-model="depense.status" dense outlined placeholder="status du depense"></v-select>
                             <v-textarea label="Description" v-model="depense.description" outlined dense placeholder="Description du depense"></v-textarea>
                         </div>
@@ -29,11 +29,12 @@
                                 <tbody v-if="items.length">
                                     <tr v-for="(item,index) in items.slice().reverse()" :key="index">
                                         <td>{{index+1}}</td>
-                                        <td>{{item.names}}</td>
+                                        <td>{{item.product}}</td>
                                         <td>{{item.price}}</td>
+                                        <td>{{ item.code }}</td>
                                         <td>
-                                            <v-chip small class="info white--text" v-if="item.status=='Active'">Active</v-chip>
-                                            <v-chip small class="warning white--text" v-if="item.status=='Desactive'">Desactive</v-chip>
+                                            <v-chip small class="info white--text" v-if="item.status===`Actif`">Actif</v-chip>
+                                            <v-chip small class="warning white--text" v-if="item.status==='Desactif'">Desactif</v-chip>
                                         </td>
                                         <td>
                                             <v-btn x-small color="#2C130D" class="white--text" @click="depense=item">Modifier
@@ -71,15 +72,15 @@ export default{
             finance:{},
             dialog:false,
             depense:{
-                id:null,
                 price:null,
+                product_id:null,
                 status:null,
-                createdby: this.$store.state.user.id
+                created_by: this.$store.state.user.id
             },
-            status:[{text:'Active',value:'Active'},{text:'Desactive',value:'Desactive'}],
+            status:[{text:'Actif',value:'Actif'},{text:'Desactif',value:'Desactif'}],
             depenses:[],
             search:null,
-            headers:[{text:'N#'},{text:'Prix',value:'price'},{text:'Statut',value:'status'},{text:''}],
+            headers:[{text:'N#'},{text:'Produit',value:'product'},{text:'Prix'},{text:'Code',value:'code'},{text:'Statut',value:'status'},{text:''}],
             loading:false,
             formloading:false,
             products:[],
@@ -96,7 +97,12 @@ export default{
         async saveFinancement(){
             this.formloading = true
             try{
-                const res = await PriceServices.register(this.depense)
+                const res = await PriceServices.register({
+                    price:this.depense.price,
+                    created_by:this.depense.created_by,
+                    status:this.depense.status,
+                    product_id:this.depense.product_id
+                })
                 if(res.status == 200){
                     this.depenses.push(res.data)
                     this.annuler()
@@ -121,7 +127,7 @@ export default{
                 this.formloading = false
                 this.$swal({
                     icon: 'error',
-                    title: `Verifier les informations envoyes ou votre connection internet.`,
+                    title: `${e.data.error}`,
                     showConfirmButton: false,
                     timer: 1500
                 })
@@ -131,7 +137,7 @@ export default{
     async mounted(){
         this.loading =true
         this.depenses = (await PriceServices.all_price()).data
-        this.products = (await productsServices.product()).data
+        this.products = (await productsServices.products()).data
         this.loading =false
     }
 }

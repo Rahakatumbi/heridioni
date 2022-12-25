@@ -26,7 +26,7 @@
                                             placeholder="vueillez Choisir le nom du produit" 
                                             v-model="produit.product_id"
                                             :items="produits"
-                                            @change="product(produit.produit_id)"
+                                            @change="productId(produit.product_id)"
                                             item-value="id"
                                             item-color="#2C130D"
                                             item-text="names"
@@ -40,7 +40,7 @@
                                             </span>
                                         </v-col>
                                         <v-col md="6" cols="6">
-                                            <v-text-field v-model.number="produit.quantity"
+                                            <v-text-field v-model="produit.quantity"
                                             label="Nombre de Kilogramme"
                                             placeholder="Entrer la Quantite des Kg"
                                             counter="10"
@@ -48,18 +48,15 @@
                                             outlined
                                             ></v-text-field>
                                         </v-col>
-                                        <v-col md="6" cols="6">
-                                            <v-autocomplete 
-                                            :items="prices" 
-                                            item-value="price" 
-                                            item-text="price" 
-                                            v-model.number="produit.price"
+                                        <v-col md="6" v-if="prix" cols="6">
+                                            <v-text-field
+                                            v-model.number="prix.price"
                                             label="Prix Unitaire."
                                             placeholder="Entrer le prix Unitaire"
                                             counter="10"
                                             dense
                                             outlined
-                                            ></v-autocomplete>
+                                            ></v-text-field>
                                         </v-col>
                                         <v-col md="12" cols="12">
                                             <v-select v-model="produit.quality"
@@ -80,7 +77,7 @@
                                             <v-checkbox  value="2" v-model="produit.check" label="Ne Possede pas un Champ"></v-checkbox>
                                         </v-col>
                                         <v-col md="12" cols="12" v-if="produit.check==1">
-                                            <v-autocomplete v-model="produit.field_id"
+                                            <v-autocomplete v-model="produit.champ_id"
                                             label="Champs"
                                             placeholder="Entrer le prix Unitaire"
                                             counter="10"
@@ -164,20 +161,13 @@
                                     </thead>
                                     <tbody v-if="items.length">
                                         <tr v-for="(item,index) in items" :key="index">
-                                            <td><v-icon color="error" @click="items.splice(index,1)" small>mdi-beaker-remove</v-icon></td>
+                                            <td><v-icon color="error" @click="item.splice(index,1)" small>mdi-beaker-remove</v-icon></td>
                                             <td>{{index+1}}</td>
-                                            <span v-if="item.produit.legnth">
-                                                <span v-for="product in item.produit " :key="product.id">
-                                                    <td>{{product.names}}</td>
-                                                </span>
-                                            </span>
-                                            <span v-else>
-                                                <td>{{item.produit_id==1?'Cacao':item.produit_id==2?'Caffee':'Caoutchout'}}</td>
-                                            </span>
+                                            <td>{{item.names}}</td>
                                             <td>{{item.quality}}</td>
                                             <td>{{item.quantity}} Kg(s)</td>
-                                            <td>${{item.price}}</td>
-                                            <td>${{(item.price * item.quantity)}}</td>
+                                            <td>${{item.montant}}</td>
+                                            <td>${{(item.montant * item.quantity)}}</td>
                                         </tr>
                                         <tr>
                                             <td></td>
@@ -251,6 +241,7 @@ import _ from 'lodash'
 import Spnipperpoint from '../../components/global/spnipperpoint.vue'
 import financementServices from '../../services/financementServices'
 import PriceServices from '../../services/PriceServices'
+import champServices from '../../services/champServices'
 export default {
     components:{ subheader, panel, Spnipperpoint },
     data(){
@@ -261,15 +252,15 @@ export default {
             headers:[{text:'N#'},{text:"Code"},{text:'Fermier'},{text:'Montant'},{text:'Date'},{text:'Depot'},{text:'Actions'}],
             saerch:null,
             search:null,
-            produit:{produit_id:{id:null,names:null},supplier:{},produit:{names:null},prix_id:null,
-            kgs:null,names:null,check:null,field_id:null,quantite:null,price:null,creator:this.$store.state.user.id,supplier_id:null},
+            produit:{product_id:null,montant:null,champ_id:null,price_id:null,
+            quality:null,names:null,check:null,quantity:null},
             produits:[],
             disabled:false,
             feuilles:[],
             privious:[],
             supplier:null,
-            prices:[],
-            prix:[],
+            champs:[],
+            prix:null,
             loadingsearch:false,
             loading:false,
             balances:[]
@@ -279,20 +270,17 @@ export default {
         finbalance(){
             return this.balances.reduce((acc,item)=>acc + item.montant - item.used_amount,0)
         },
-        champs(){
-            return this.supplier.champs
-        },
        items(){
             return this.$store.state.sheet
         },
         total(){
-            return this.items.reduce((acc,item)=>acc + item.price * item.kgs,0)
+            return this.items.reduce((acc,item)=>acc + item.montant * item.quantity,0)
         },
         itemKgs(){
-           return this.items.reduce((acc,item)=>acc + item.kgs,0) 
+           return this.items.reduce((acc,item)=>acc + parseFloat(item.quantity),0) 
         },
         unitprice(){
-            return this.items.reduce((acc,item)=>acc + item.price,0)
+            return this.items.reduce((acc,item)=>acc + parseFloat(item.montant),0)
         },
     },
     methods:{
@@ -305,29 +293,46 @@ export default {
         async annuler(){
             this.$store.dispatch("ResetSheet")
             this.produit={produit_id:null,kgs:null,names:null,quantite:null,price:null,supplier_id:null}
+            this.prix = null
             this.search =null
         },
-        async product(id){
-          const data= this.produits.filter(item=>{
-                return item.id ==id
+        async productId(item){
+            this.prix= (await PriceServices.last_price(item)).data
+            this.champs = (await champServices.supplierId(this.supplier.id)).data
+            const data = this.produits.filter(product=>{
+                return product.id == item 
             })
-            const price = this.prix.filter(item =>{
-                return item.product_id == id
-            })
-            this.prices = price
-            this.produit.produit= data
+             data.forEach(element => {
+                return this.produit.names =element.names
+             });
         },
         async feuille(){
-            this.$store.dispatch("setFeuille",this.produit)
-            this.produit={produit_id:null,kgs:null,names:null,quantite:null,price:null}
-            this.produit.supplier_id = this.$store.state.sheet.supplier_id
+            var chapId = this.produit.champ_id
+            if (chapId==null){
+                chapId = 0
+            }
+            console.log(chapId)
+            const data ={
+                product_id:this.produit.product_id,
+                champ_id:chapId,
+                quality:this.produit.quality,
+                names:this.produit.names,
+                price_id:this.prix.id,
+                quantity:this.produit.quantity,
+                montant:this.prix.price,
+            }
+            this.$store.dispatch("setFeuille",data)
+            this.produit={product_id:null,quality:null,quantity:null,price_id:null,prix:null}
         },
         async saveStock(){
             this.loading =true
+            const financement = this.finbalance - this.total
             const response = await stockServices.saveStock({
-                creator:this.$store.state.user.id,
-                supplier_id:this.supplier.supplier.id,
+                created_by:this.$store.state.user.id,
+                fermier_id:this.supplier.id,
                 branche_id:this.$store.state.branche.id,
+                montant:this.total.toString(),
+                financement:financement.toString(),
                 data:this.items
             })
             if(response){
@@ -343,25 +348,27 @@ export default {
             }
         },
         async searchFermer(value){
-            this.loadingsearch =true
-            const response = await supllierServices.saerch({
-                code:value,
-                name:value
-            })
-            this.supplier = response.data
-            this.loadingsearch =false
+            if(value!==null){
+                this.loadingsearch =true
+                const response = await supllierServices.saerch({
+                    code:value,
+                    name:value
+                })
+                this.supplier = response.data
+                this.loadingsearch =false
+            }
         }
     },
    async mounted(){
-       this.produits = (await productsServices.product()).data
+       this.produits = (await productsServices.products()).data
        this.privious = (await stockServices.stock()).data
-       this.prix = (await PriceServices.last_price()).data
        this.balances = (await financementServices.financement(this.$store.state.branche.id)).data
     },
     watch:{
         search: _.debounce(async function (value) {
            this.searchFermer(value)
         },700)
+        
     }
 
 }

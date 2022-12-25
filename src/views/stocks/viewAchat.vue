@@ -36,8 +36,9 @@
                                 <td>${{(item.price * item.quantity)}}</td>
                             </tr>
                             <tr>
-                                <td></td>
-                                <td colspan="4">Total</td>
+                                <td colspan="3">Total</td>
+                                <td>{{itemKgs}} Kg(s)</td>
+                                <td>${{unitprice}}</td>
                                 <td>${{total}}</td>
                             </tr>
                         </tbody>
@@ -74,7 +75,13 @@ export default {
         },
         achat(){
             return this.$store.state.achat
-        }
+        },
+        itemKgs(){
+           return this.items.reduce((acc,item)=>acc + parseFloat(item.quantity),0) 
+        },
+        unitprice(){
+            return this.items.reduce((acc,item)=>acc + parseFloat(item.montant),0)
+        },
 
     },
    async mounted(){
