@@ -46,6 +46,15 @@
                                 outlined
                                 ></v-text-field>
                             </v-col>
+                            <v-col md="12" cols="12">
+                                <v-text-field v-model="client.country"
+                                label="Pays du Client"
+                                placeholder="Pays du Client"
+                                counter="50"
+                                dense
+                                outlined
+                                ></v-text-field>
+                            </v-col>
                         </v-row>
                     </v-card-text>
                     <v-divider></v-divider>
@@ -64,9 +73,10 @@
                                 <tr v-for="(item,index) in items" :key="index">
                                     <td>{{index+1}}</td>
                                     <td>{{item.names}}</td>
+                                    <td>{{item.code}}</td>
                                     <td>{{item.email}}</td>
                                     <td>{{item.address}}</td>
-                                    <td>{{item.phone}}</td>
+                                    <td>{{item.telephone}}</td>
                                     <td>
                                         <v-btn x-small @click="client=item" color="#2C130D" class="white--text">Modifier</v-btn>
                                         <v-btn x-small color="error" class="white--text">Supprimer</v-btn>
@@ -91,7 +101,7 @@ export default {
         return{
             loading:false,
             items:[],
-            headers:[{text:'N#'},{text:"Nom du Client"},{text:'Mail'},{text:'Addresse'},{text:'Telephone'},{text:'Actions'}],
+            headers:[{text:'N#'},{text:"Nom du Client"},{text:'Code',value:'code'},{text:'Mail'},{text:'Addresse'},{text:'Telephone'},{text:'Actions'}],
             search:null,
             client:{names:null,phone:null,email:null,address:null,id:null,creator:1,type:null,country:null},
         }
@@ -105,14 +115,15 @@ export default {
             this.loading=true
             try{
                 const response = await clientServices.register({
-                    id:parseInt(this.client.id),
+                    id:this.client.id,
                     names:this.client.names,
-                    phone:parseInt(this.client.phone),
+                    telephone:this.client.phone,
                     address:this.client.address,
                     email:this.client.email,
-                    country:this.client.country
+                    country:this.client.country,
+                    created_by:this.$store.state.user.id
                 })
-                if(response){
+                if(response.data.status==200){
                     this.loading =false
                     if(this.client.id==null){
                     this.items.push(response.data)
@@ -128,12 +139,18 @@ export default {
                 }
             }
             catch(e){
+                this.$swal.fire({
+                    position:'top',
+                    icon:'error',
+                    title:`${e.data.error}`
+                })
+                this.loading = false
                 console.log(e.data)
             }
         }
     },
    async mounted(){
-       this.items = (await clientServices.client()).data
+       this.items = (await clientServices.clients()).data
     }
 }
 </script>

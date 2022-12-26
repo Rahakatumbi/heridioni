@@ -15,23 +15,23 @@
                                         <v-text-field v-model="user.names" dense outlined label="Noms Complets de l'Agent"></v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="6">
-                                        <v-select
+                                        <v-autocomplete
                                          v-model="user.role"
                                          item-text="text"
-                                         item-value="id"
+                                         item-value="text"
                                          :items="fonction" 
                                          dense 
                                          outlined 
                                          label="Fonction de l'Agent">
-                                         </v-select>
+                                        </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" md="6">
-                                        <v-select v-model="user.status"
+                                        <v-autocomplete v-model="user.status"
                                          item-text="text"
-                                         item-value="id"
+                                         item-value="text"
                                          :items="status" 
                                          dense outlined label="Statut de l'Agent">
-                                         </v-select>
+                                        </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" md="12">
                                         <v-text-field v-model="user.email" dense outlined label="Email addresse de l'Agent"></v-text-field>
@@ -40,11 +40,20 @@
                                         <v-text-field v-model="user.phone" dense outlined label="Numero de telephone de l'Agent"></v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="6">
-                                        <v-select v-model="user.gender"
-                                         item-text="text"
-                                         item-value="id"
-                                         :items="gender"  
-                                        dense outlined label="Sexe de l'Agent"></v-select>
+                                        <v-autocomplete v-model="user.gender"
+                                            item-text="text"
+                                            item-value="text"
+                                            :items="gender"  
+                                            dense outlined label="Sexe de l'Agent">
+                                        </v-autocomplete>
+                                    </v-col>
+                                    <v-col cols="12" md="12">
+                                        <v-autocomplete v-model="user.etat_civil"
+                                            item-text="text"
+                                            item-value="text"
+                                            :items="etat_civil"  
+                                            dense outlined label="Etat-Civil">
+                                        </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" md="12">
                                         <v-text-field v-model="user.address" dense outlined label="Addresse Physique de l'Agent"></v-text-field>
@@ -104,9 +113,12 @@ export default {
             alert:false,
             msg:null,
             type:null,
-            user:{id:null,names:null,phone:null,address:null,email:null,status:null,role:null,gender:null},
+            user:{id:null,names:null,phone:null,address:null,email:null,
+                etat_civil:null,status:null,role:null,gender:null,created_by:this.$store.state.user.id
+            },
             gender:[{text:'Homme',id:1},{text:'Femme',id:2}],
-            status:[{text:'Operationnel',id:1},{text:'Desactiver',id:2}],
+            status:[{text:'Actif',id:1},{text:'Desactiver',id:2}],
+            etat_civil:[{text:'Celibataire',id:1},{text:'Marié',id:2}],
             fonction:[{text:'Admin',id:1},{text:'Chef de Depot',id:2},{text:'Gerant',id:3},{text:'Agronome',id:4},{text:'Financier',id:5},],
             headers:[{text:"N#"},{text:"Noms"},{text:"Email"},{text:"Fonction"},{text:"Etat"},{text:"Addresse"},{text:"Phone"},{text:""}],
             users:[],
@@ -114,7 +126,7 @@ export default {
     },
     methods:{
         async annuler(){
-            this.user={id:null,names:null,phonexx:null,address:null,email:null,status:null,role:null,gender:null}
+            this.user={id:null,names:null,phone:null,etat_civil:null,address:null,email:null,status:null,role:null,gender:null}
             this.loading =false
         },
         async saveUser(){

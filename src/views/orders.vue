@@ -10,19 +10,19 @@
                                 <v-autocomplete :items="clients" @change="client" v-model="order.client_id" item-text="names" item-value="id" label="Client" placeholder="Choisir le Client" outlined dense></v-autocomplete>
                             </v-col>
                             <v-col md="6" cols="12">
-                                <v-select label="Mode de payement" v-model="order.mode_de_payement" :items="modes" item-value="id" item-text="text" placeholder="Selectionner" outlined dense></v-select>
+                                <v-autocomplete label="Mode de payement" v-model="order.mode_de_payement" :items="modes" item-value="text" item-text="text" placeholder="Selectionner" outlined dense></v-autocomplete>
                             </v-col>
                             <v-col md="6" cols="12">
                                 <v-text-field label="Lieu de Livraison" v-model="order.lieu_de_livraison" placeholder="Tapez le lieu de livraison" outlined dense></v-text-field>
                             </v-col>
-                            <v-col :md="order.type==1?6:12" cols="12">
-                                <v-select label="Type de Commande" :items="types" item-value="id" item-text="text" v-model="order.type" placeholder="Selectionner le type" outlined dense></v-select>
+                            <v-col :md="order.type==`Financer`?6:12" cols="12">
+                                <v-autocomplete label="Type de Commande" :items="types" item-value="text" item-text="text" v-model="order.type" placeholder="Selectionner le type" outlined dense></v-autocomplete>
                             </v-col>
-                            <v-col md="6" cols="12" v-if="order.type==1">
-                                <v-text-field label="Montant du Financement" type="number" v-model="order.financement" placeholder="Tapez le Montant di financement" outlined dense></v-text-field>
+                            <v-col md="6" cols="12" v-if="order.type=='Financer'">
+                                <v-text-field label="Montant du Financement" v-model.number="order.financement" placeholder="Tapez le Montant di financement" outlined dense></v-text-field>
                             </v-col>
                             <v-col md="6" cols="12">
-                                <v-select :items="qualites" v-model="order.quality" item-value="id" item-text="text" label="Quatite(s)" placeholder="Selectionner" outlined dense></v-select>
+                                <v-autocomplete :items="qualites" v-model="order.quality" item-value="text" item-text="text" label="Quatite(s)" placeholder="Selectionner" outlined dense></v-autocomplete>
                             </v-col>
                             <v-col md="6" cols="12">
                                 <v-text-field type="date" label="Echeance(s)" v-model="order.echeance" placeholder="Tapez le nombre de kg(s)" outlined dense></v-text-field>
@@ -38,18 +38,17 @@
                         <v-card-actions>
                             <v-btn color="error" @click="annuler" small>Annuler</v-btn>
                             <v-spacer></v-spacer>
-                            <v-btn color="#2C130D" class="white--text" @click="addOnOrder" small>Ajouter a la Feuille</v-btn>
+                            <v-btn color="#2C130D" class="white--text" @click="addOnOrder" small>Ajouter</v-btn>
                         </v-card-actions>
                     </v-card-text>
                 </panel>
             </v-col>
             <v-col cols="12" md="8">
-                <panel :title="`Commande `"> 
+                <panel :title="`Commande`"> 
                         <v-flex class="mr-2 ml-2 mt-1">
                             <v-row>
                                 <v-col cols="12" md="4">
                                     <div class="text-uppercase">
-
                                     <strong>Socoopher Sarl</strong><br>
                                     <span>Commande N#</span>
                                     </div>
@@ -145,7 +144,7 @@
                                         <tr v-for="(item,index) in viewItems" :key="index">
                                             <td><a class="cut">x</a><span>{{index+1}}</span></td>
                                             <td>{{item.names}}</td>
-                                            <td>{{item.quality==1?'1e':'2e'}}</td>
+                                            <td>{{item.quality}}</td>
                                             <td>{{item.echeance}}</td>
                                             <td>{{item.quantity}} Kg(s)</td>
                                             <td>{{item.served_quantity}} Kg(s)</td>
@@ -191,11 +190,11 @@
                             <tbody v-if="items.length && !dataloads">
                                 <tr v-for="(item,index) in items" :key="index">
                                     <td>{{++index}}</td>
-                                    <td>CMD0{{item.id}}</td>
+                                    <td>{{item.code}}</td>
                                     <td>{{item.names}}</td>
-                                    <td>{{item.status==1?'En Entente':item.status==2?'En Cours':item.status==3?'Termine':'???'}}</td>
-                                    <td :class="item.type==1?'green--text':'warning--text'">{{item.type==1?'Financer':'Auto Financement'}}</td>
-                                    <td>{{item.mode_de_payement==1?'CAD':item.mode_de_payement==2?'FOB':item.mode_de_payement==3?'CIF':item.mode_de_payement==4?'CFR':item.mode_de_payement==5?'FOT':'Autre'}}</td>
+                                    <td>{{item.status}}</td>
+                                    <td :class="'green--text'">{{ item.type }}</td>
+                                    <td>{{item.mode_de_payement}}</td>
                                     <td>
                                         <v-btn x-small @click="viewOrder(item)" color="info">
                                         <v-icon small>mdi-eye</v-icon>
@@ -245,7 +244,10 @@ export default {
         products:[],
         produit:null,
         dataloads:false,
-        order:{id:null,client_id:null,quality:null,type:null,financement:null,product_id:null,quantity:null,mode_de_payement:null,echeance:null,lieu_de_livraison:null,creator:this.$store.state.user.id},
+        order:{id:null,client_id:null,quality:null,type:null,financement:null,
+            product_id:null,quantity:null,mode_de_payement:null,echeance:null,lieu_de_livraison:null
+            ,creator:this.$store.state.user.id
+        },
         headers:[{text:'N#'},{text:'Code'},{text:'Client'},{text:'Etat'},{text:'Type'},{text:'Mode de Payement'},{text:'Actions'}],
         qualites:[{text:'Premiere Qualite',id:1},{text:'Deuxieme Qualite',id:2}],
         types:[{text:'Financer',id:1},{text:'Auto Financement',id:2}],
@@ -260,13 +262,13 @@ export default {
             return this.$store.state.orders
         },
         total(){
-            return this.items.reduce((acc,item)=>acc + item.quantity,0)
+            return this.items.reduce((acc,item)=>acc + parseFloat(item.quantity),0)
         },
         totalpreview(){
-            return this.viewItems.reduce((acc,item)=>acc + item.quantity,0)
+            return this.viewItems.reduce((acc,item)=>acc + parseFloat(item.quantity),0)
         },
         totalserved(){
-            return this.viewItems.reduce((acc,item)=>acc + item.served_quantity,0)
+            return this.viewItems.reduce((acc,item)=>acc + parseFloat(item.served_quantity),0)
         }
   },
   methods:{
@@ -278,18 +280,18 @@ export default {
         const data= this.clients.filter((client)=>{
                 return client.id == this.order.client_id
             })
-        this.identify =data
+        this.identify = data
     },
     async start_traitement(){
         this.$store.dispatch('setClientOrder',this.identify)
-        console.log(JSON.stringify(this.viewItems))
         this.viewItems.forEach(element => {
             this.$store.dispatch('setOrder',element)
         });
     },
     async annuler(){
         this.order={id:null,client_id:null,type:null,financement:null,quality:null,quantity:null,mode_de_payement:null,
-        echeance:null,lieu_de_livraison:null,creator:this.$store.state.user.id}
+        echeance:null,lieu_de_livraison:null,creator:this.$store.state.user.id
+    }
     },
     async addOnOrder(){
         if(this.previous){
@@ -300,7 +302,7 @@ export default {
                 product_id: this.order.product_id,
                 produit:produit,
                 quality:this.order.quality,
-                quantity:parseFloat(this.order.quantity),
+                quantity:this.order.quantity,
                 echeance:this.order.echeance,
             }
             this.$store.dispatch('setOrder',data)
@@ -351,13 +353,14 @@ export default {
         this.dataloads=true
         try{
             const response = await orderService.register({
+                montant:this.total,
                 mode_de_payement:this.order.mode_de_payement,
                 lieu_de_livraison:this.order.lieu_de_livraison,
                 client_id:this.order.client_id,
                 type:this.order.type,
-                financement:parseFloat(this.order.financement),
-                creator:this.order.creator,
-                info:this.items,
+                financement:this.order.financement.toString(),
+                created_by:this.order.creator,
+                data:this.items,
             })
             if(response){
                 this.dataloads =false
@@ -385,19 +388,20 @@ export default {
                     title: `Une erreur s'est produit.`,
                     showConfirmButton: false,
                     timer: 1500
-                });
+                }
+            );
 
         }
     }
   },
  async mounted(){
-    this.clients = (await clientsServices.client()).data
-    this.products = (await productsServices.product()).data
-    this.dataloads =true
     this.orders = (await orderService.orders()).data
     // .filter(status=>{
     //     return status.status != 3 &&status.status !=2
     // })
+    this.clients = (await clientsServices.clients()).data
+    this.products = (await productsServices.products()).data
+    this.dataloads =true
     this.dataloads =false
   }
     
